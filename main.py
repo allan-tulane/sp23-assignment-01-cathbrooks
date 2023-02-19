@@ -12,8 +12,19 @@ def foo(x):
     return foo(x-1) + foo(x-2)
     
 def longest_run(mylist, key):
-    ### TODO
-    pass
+  longest_seq = 0
+  current_seq = 0
+  for num in mylist:
+    if num == key:
+      current_seq += 1
+    else:
+      if current_seq > longest_seq:
+        longest_seq = current_seq
+      current_seq = 0
+
+  return longest_seq
+      
+      
 
 
 class Result:
@@ -30,8 +41,49 @@ class Result:
     
     
 def longest_run_recursive(mylist, key):
-    ### TODO
-    pass
+  #base case as to not exceed recurrsion depth
+  if not mylist or len(mylist) == 1:
+    return 1
+    
+  #split list in half
+  middle_index = len(mylist)//2
+  left_half = mylist[:middle_index]  
+  right_half = mylist[middle_index:]
+
+  #recursive call
+  left_half = longest_run_recursive(left_half, key)
+  right_half = longest_run_recursive(right_half, key)
+
+  #find longest run in both halves and if it crosses the middle
+  left_half_longest_run = 0
+  right_half_longest_run = 0
+  for i in range(middle_index-1, -1, -1):
+    if mylist[i] == key:
+      left_half_longest_run += 1
+    else:
+      break
+  for i in range(middle_index, len(mylist)):
+    if mylist[i] == key:
+      right_half_longest_run += 1
+    else:
+      break
+
+  middle_longest_run = left_half_longest_run + right_half_longest_run
+
+  #find longest run
+  longest_run = max(left_half_longest_run, right_half_longest_run, middle_longest_run)
+
+  #find if the entire input matches the key
+  is_entire_range = False
+  if len(mylist) == longest_run:
+    is_entire_range = True
+
+  #utilize result class
+  result = Result(left_half_longest_run, right_half_longest_run, longest_run, is_entire_range)
+
+  return result
+
+  
 
 ## Feel free to add your own tests here.
 def test_longest_run():
